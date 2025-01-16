@@ -1,0 +1,10 @@
+main
+test
+
+*.o
+*.sh
+*.c
+*.txt
+
+tests/*.o
+tests/*/
