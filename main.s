@@ -11,6 +11,7 @@
 
 section .data
   PROMPT_ENTER_CC db "Enter Credit Card Number: ", NULL_CHAR
+  CARD_IS         db "Credit Card: ", NULL_CHAR
 
   BUFFER_LENGTH equ 0x40
 
@@ -18,7 +19,7 @@ section .text
 global _start
 
 _start:
-  sub   rsp, 0x8
+  sub   rsp, 0x10
 
   lea   rdi, [PROMPT_ENTER_CC]
   mov   rsi, 0
@@ -53,12 +54,25 @@ _start:
   mov   rdi, [rsp]
   call  read_credit_card_number
 
+  cmp   rax, 0
+  jl    .error
+
+  mov   [rsp+0x8], rax
+
+  lea   rdi, [CARD_IS]
+  mov   rsi, 0
+  call  print
+
+  mov   rdi, [rsp+0x8]
+  mov   rsi, 0
+  call  println
+
   ; free buffer
   mov   rdi, [rsp]
   call  free
 
 .return:
-  add   rsp, 0x8
+  add   rsp, 0x10
 
   mov   rax, SYS_EXIT
   mov   rdi, SUCCESS_CODE
